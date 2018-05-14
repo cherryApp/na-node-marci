@@ -8,15 +8,40 @@
 const http = require('http');
 
 /**
- * HTTP kérések feldolgozása és a megfelelő válasz visszaküldése.
+ * Bejelentkező űrlap.
+ */
+const loginContent = `
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Oldal</title>
+    </head>
+    <body>
+        <h2>Belépés</h2>
+        <p>kérem adja meg az adatokat a belépéshez</p>
+        <form method="post">
+            <label>Email</label>
+            <br>
+            <input type="email" name="email">
+            <br><br>
+            <label>Jelszó</label>
+            <br>
+            <input type="password" name="password">
+            <br><br>
+            <button>belépés</button>
+        </form>
+    </body>
+</html>
+`;
+
+/**
+ * HTTP kérések feldolgozása és a megfelelő válasz küldése a kliens számára.
  */
 class HTTPResponse {
     /**
-     * A megfelelő url esetén a megfelelő választ küldi vissza.
-     * A kapott paramétereket példányváltozókban tárolja.
      * Beállítja az elfogadott url-ek listáját.
-     * @param {Request} req a http kérés.
-     * @param {Response} res a http válasz objektum.
+     * @param {Request} req a kérés adatai.
+     * @param {Response} res a válaszadó objektum.
      */
     constructor(req, res) {
         this.req = req;
@@ -32,24 +57,21 @@ class HTTPResponse {
     }
 
     /**
-     * Az url alapján eldönti, hogy milyen forrást küldjön vissza a kliensnek.
-     * Ha olyan url-t kap, ami nincs beállítva a listában, akkor 404 hibát dob.
-     * Ha benne van a routing listában az url, akkor az annak megfelelő 
-     * tartalmat küldi vissza.
+     * Az url alapján eldönti, hogy milyen választ küldjön a kliensnek.
      */
     sendResponse() {
         let page = this.routes[this.req.url],
             content = '';
-        
+
         switch(page) {
             case 'index': 
-                content = 'Hello az oldalon.';
+                content = 'Hellóka, a főoldalon vagy.';
                 break;
-            case 'login': 
-                content = 'Belépés: ';
+            case 'login':
+                content = loginContent;
                 break;
             case 'logout': 
-                content = 'Kilépés: ';
+                content = 'Kilépés...';
                 break;
             default: 
                 return this.send404();
@@ -57,92 +79,91 @@ class HTTPResponse {
 
         this.res.writeHead(200, {
             'Content-Length': Buffer.byteLength(content),
-            'Content-Type': 'text/html' }
-        );
-        
+            'Content-Type': 'text/html'
+        });
         this.res.end(content);
     }
 
     /**
-     * 404 hiba küldése.
+     * 404 hibaüzenet küldése.
      */
     send404() {
         let body = `Az oldal nem található!`;
         this.res.writeHead(404, {
             'Content-Length': Buffer.byteLength(body),
-            'Content-Type': 'text/plain' }
-        );
-        
+            'Content-Tpye': 'text/plain'
+        });
+
         this.res.end(body);
     }
 }
 
 /**
- * ES6 OOP.
+ * Server osztály a kérések és válaszok feldolgozására.
  */
 class Server {
     /**
-     * A konstruktor akkor fut le, amikor egy új Server példányt hozunk létre.
-     * Most nincs argumentuma, de adhatunk át neki változókat ha szükséges.
-     * Feladatai: 
+     * A konstruktor akkor fut le, amikor létrehozunk egy új szerver példányt.
+     * Most nincs argumentuma, de át is adhatnánk neki adatokat.
      * 1. Beállítja a portot, ahol fut majd a NodeJS szerver.
-     * 2. Beállítja a maximum újrapróbálkozások számát hiba estére.
+     * 2. Beállítja a maximum újrapróbálkozások számát, foglalt port esetén.
      * 3. Beállítja a kezdeti értékét az újrapróbálkozásoknak.
      * 4. Beállítja az újrapróbálkozások között eltelt időt.
-     * 5. Létrehoz egy új szervert a http.createServer segítségével.
-     * 6. A szervert beállítja, hogy figyelje a megadott portot.
+     * 5. Létrehozza a szervert.
+     * 6. Beállítja a hibakezelést.
+     * 7. Elindítja a port figyelését.
      */
     constructor() {
         this.port = 3210;
-        this.maxRetry = 10;
+        this.maxRetry = 7;
         this.retryNum = 0;
-        this.retryInterval = 3000;
+        this.retryInterval = 1500;
 
         this.instance = http.createServer( (req, res) => {
             this.response(req, res);
         });
 
         this.handleError();
-        this.startListening();        
+
+        this.startListening();
     }
 
     /**
-     * Összeállítja a válaszokat a http kérések számára.
-     * @param {Request} req a kérést tartalmazza. 
-     * @param {Response} res a válaszadáshoz szükséges objektum.
-     */
-    response(req, res) {
-        new HTTPResponse(req, res);
-    }
-
-    /**
-     * Megkezdi az adott port figyelését.
+     * Post figyelésének megkezdése.
      */
     startListening() {
         this.instance.listen(this.port, () => {
-            console.log(`Server running in port: ${this.port}`);
+            console.log(`My server listen in port: ${this.port}.`);
         });
     }
 
     /**
+     * Összeállítja a válaszokat a http kérésekhez.
+     * @param {Request} req a kérést tartalmazza.
+     * @param {Response} res a válaszadáshoz szükséges objektum.
+     */
+    response(req, res) {
+        console.log(`${req.method}  ${req.url}  ${new Date()}, ${req.cookie}`);
+        new HTTPResponse(req, res);
+    }
+
+    /**
      * Hibák kezelése.
-     * Ha a port foglalt, akkor újrapróbálkozik 1s múlva.
+     * Ha a port foglalt, akkor újrapróbálkozik a megodott intervallumonként.
      */
     handleError() {
         this.instance.on('error', (e) => {
             if (e.code === 'EADDRINUSE') {
                 this.retryNum++;
-                if (this.retryNum >= this.maxRetry) {
-                    return;
+                if (this.maxRetry >= this.retryNum) {
+                    let to = setTimeout( () => {
+                        clearInterval(to);
+                        console.error(`A ${this.port} port használatban van! 
+                            Újrapróbálkozás ${(this.retryInterval/1000)}s múlva.`);
+                        this.instance.close();
+                        this.startListening();
+                    }, this.retryInterval);
                 }
-
-                console.log('A port használatban van, újrapróbálkozás...');
-
-                let to = setTimeout(() => {
-                    clearTimeout(to);
-                    this.instance.close();
-                    this.startListening();
-                }, this.retryInterval);
             }
         });
     }
