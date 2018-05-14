@@ -8,6 +8,76 @@
 const http = require('http');
 
 /**
+ * HTTP kérések feldolgozása és a megfelelő válasz visszaküldése.
+ */
+class HTTPResponse {
+    /**
+     * A megfelelő url esetén a megfelelő választ küldi vissza.
+     * A kapott paramétereket példányváltozókban tárolja.
+     * Beállítja az elfogadott url-ek listáját.
+     * @param {Request} req a http kérés.
+     * @param {Response} res a http válasz objektum.
+     */
+    constructor(req, res) {
+        this.req = req;
+        this.res = res;
+
+        this.routes = {
+            '/': 'index',
+            '/login': 'login',
+            '/logout': 'logout'
+        };
+
+        this.sendResponse();
+    }
+
+    /**
+     * Az url alapján eldönti, hogy milyen forrást küldjön vissza a kliensnek.
+     * Ha olyan url-t kap, ami nincs beállítva a listában, akkor 404 hibát dob.
+     * Ha benne van a routing listában az url, akkor az annak megfelelő 
+     * tartalmat küldi vissza.
+     */
+    sendResponse() {
+        let page = this.routes[this.req.url],
+            content = '';
+        
+        switch(page) {
+            case 'index': 
+                content = 'Hello az oldalon.';
+                break;
+            case 'login': 
+                content = 'Belépés: ';
+                break;
+            case 'logout': 
+                content = 'Kilépés: ';
+                break;
+            default: 
+                return this.send404();
+        }
+
+        this.res.writeHead(200, {
+            'Content-Length': Buffer.byteLength(content),
+            'Content-Type': 'text/html' }
+        );
+        
+        this.res.end(content);
+    }
+
+    /**
+     * 404 hiba küldése.
+     */
+    send404() {
+        let body = `Az oldal nem található!`;
+        this.res.writeHead(404, {
+            'Content-Length': Buffer.byteLength(body),
+            'Content-Type': 'text/plain' }
+        );
+        
+        this.res.end(body);
+    }
+}
+
+/**
  * ES6 OOP.
  */
 class Server {
@@ -42,15 +112,7 @@ class Server {
      * @param {Response} res a válaszadáshoz szükséges objektum.
      */
     response(req, res) {
-        let body = `<h1>Hello Marci!</h1>
-            <p>A port a kovetkező: ${this.port}</p>.
-        `;
-        res.writeHead(201, {
-            'Content-Length': Buffer.byteLength(body),
-            'Content-Type': 'text/html' }
-        );
-        
-        res.end(body);
+        new HTTPResponse(req, res);
     }
 
     /**
