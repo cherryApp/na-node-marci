@@ -29,7 +29,7 @@ class Server {
         this.retryInterval = 3000;
 
         this.instance = http.createServer( (req, res) => {
-            this.create(req, res);
+            this.response(req, res);
         });
 
         this.handleError();
@@ -37,17 +37,20 @@ class Server {
     }
 
     /**
-     * 
+     * Összeállítja a válaszokat a http kérések számára.
      * @param {Request} req a kérést tartalmazza. 
      * @param {Response} res a válaszadáshoz szükséges objektum.
      */
-    create(req, res) {
-        res.write('<h1>');
-        res.write('Hello ');
-        res.write('Marci!');
-        res.write('</h1>');
-        res.write(`<p>A port a kovetkező: ${this.port}.`);
-        res.end();
+    response(req, res) {
+        let body = `<h1>Hello Marci!</h1>
+            <p>A port a kovetkező: ${this.port}</p>.
+        `;
+        res.writeHead(201, {
+            'Content-Length': Buffer.byteLength(body),
+            'Content-Type': 'text/html' }
+        );
+        
+        res.end(body);
     }
 
     /**
