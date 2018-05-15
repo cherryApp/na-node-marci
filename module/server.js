@@ -114,7 +114,17 @@ class Server {
      * 7. Elindítja a port figyelését.
      */
     constructor() {
-        this.port = 3210;
+        /*console.log(process.argv.join('#').match(/\#port\=([^\#]*)/)[1]);
+        process.on('exit', (code) => {
+            console.log(`A processz leállt a ${code} kóddal.`); 
+        });
+        setTimeout( () => {
+            process.exit(3);
+        }, 1000);*/
+
+        this.processArgs();
+
+        this.port = this.argObject.port || 3210;
         this.maxRetry = 7;
         this.retryNum = 0;
         this.retryInterval = 1500;
@@ -126,6 +136,24 @@ class Server {
         this.handleError();
 
         this.startListening();
+    }
+
+    /**
+     * Feldolgozza a processz argumentumait.
+     */
+    processArgs() {
+        this.args = [];
+        this.argObject = {};
+        let pair = [];
+
+        process.argv.forEach((val, index) => {
+            if (val.includes('=')) {
+                pair = val.split('=');
+                this.argObject[pair[0]] = pair[1];
+            } else {
+                this.args[index] = val;
+            }
+        });
     }
 
     /**
