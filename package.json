@@ -1,0 +1,24 @@
+{
+  "name": "na-node-marci",
+  "version": "1.0.0",
+  "description": "Netacademia NodeMarci tanfolyam.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cherryApp/na-node-marci.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cherryApp/na-node-marci/issues"
+  },
+  "homepage": "https://github.com/cherryApp/na-node-marci#readme",
+  "dependencies": {
+    "@coolgk/jwt": "^3.0.0",
+    "cookies": "^0.7.1",
+    "set-cookie": "0.0.4"
+  }
+}

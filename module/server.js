@@ -7,7 +7,9 @@
  */
 const http = require('http'),
     zlib = require('zlib'),
-    Readable = require('stream').Readable;
+    Readable = require('stream').Readable,
+    Auth = require('./auth'),
+    querystring = require('querystring');
 
 /**
  * Bejelentkező űrlap.
@@ -42,20 +44,60 @@ const loginContent = `
 class HTTPResponse {
     /**
      * Beállítja az elfogadott url-ek listáját.
+     * -> Szétválasztja a kéréseket metódus szerint.
      * @param {Request} req a kérés adatai.
      * @param {Response} res a válaszadó objektum.
      */
     constructor(req, res) {
         this.req = req;
         this.res = res;
+        this.testLogin = {email: 'joe@gmail.com', 'password': 'joe'};
 
         this.routes = {
-            '/': 'index',
-            '/login': 'login',
-            '/logout': 'logout'
+            '/': { name: 'index', guard: true },
+            '/login': { name: 'login', guard: false },
+            '/logout': { name: 'logout', guard: true }
         };
 
-        this.sendResponse();
+        switch( this.req.method.toLowerCase() ) {
+            case 'get': 
+                this.sendResponse();
+                break;
+            case 'post': 
+                this.handlePost();
+                break;
+            default: 
+                this.send404();
+        }
+        
+    }
+
+    /**
+     * Post kérések feldolgozása.
+     */
+    handlePost() {
+        let postData = '';
+        this.req.on('data', (chunk) => {
+            postData += chunk;
+        });
+        this.req.on('end', () => {
+            postData = querystring.parse(postData);
+
+            if (
+                this.req.url === '/login' && 
+                postData.email == this.testLogin.email && 
+                postData.password == this.testLogin.password
+            ) {
+                this.res = Auth.setCookie(
+                    this.req, 
+                    this.res, 
+                    {id: 33, name: 'Joe', email: 'joe@gmail.com'}
+                );
+                this.compress('Sikeres belépés!');
+            } else {
+                this.send401();
+            }
+        });
     }
 
     /**
@@ -66,7 +108,15 @@ class HTTPResponse {
             content = '',
             encoded = {};
 
-        switch (page) {
+        if (!page || !page.name) {
+            return this.send404();
+        }
+
+        if (page.guard && !Auth.isAuthenticated(this.req, this.res)) {
+            return this.send401();
+        }
+
+        switch (page.name) {
             case 'index':
                 content = 'Hellóka, a főoldalon vagy.';
                 break;
@@ -120,6 +170,19 @@ class HTTPResponse {
     send404() {
         let body = `Az oldal nem található!`;
         this.res.writeHead(404, {
+            'Content-Length': Buffer.byteLength(body),
+            'Content-Tpye': 'text/plain'
+        });
+
+        this.res.end(body);
+    }
+
+    /**
+     * 401 hibaüzenet küldése.
+     */
+    send401() {
+        let body = `Hozzáférés megtagadva! Kérem jelentkezzen be.`;
+        this.res.writeHead(401, {
             'Content-Length': Buffer.byteLength(body),
             'Content-Tpye': 'text/plain'
         });
@@ -226,5 +289,5 @@ class Server {
         });
     }
 }
-// csáó bell
+
 new Server();
