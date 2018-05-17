@@ -1,0 +1,17 @@
+[
+    {
+        "name": "Vasaló",
+        "manufacturer": "Bosch",
+        "price": 20000
+    },
+    {
+        "name": "Mosógép",
+        "manufacturer": "Bosch",
+        "price": 200000
+    },
+    {
+        "name": "Szárítógép",
+        "manufacturer": "Bosch",
+        "price": 150000
+    }
+]

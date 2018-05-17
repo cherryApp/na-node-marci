@@ -7,7 +7,8 @@ const zlib = require('zlib'),
       querystring = require('querystring'), 
       Template = require('./template'),
       Logger = require('./logger'),
-      fsm = require('./fsm');
+      fsm = require('./fsm'),
+      DB = require('./DB');
 
 /**
  * HTTP kérések feldolgozása és a megfelelő válasz küldése a kliens számára.
@@ -30,7 +31,8 @@ module.exports = class HTTPResponse {
         this.routes = {
             '/': { name: 'index', guard: true },
             '/login': { name: 'login', guard: false },
-            '/logout': { name: 'logout', guard: true }
+            '/logout': { name: 'logout', guard: true },
+            '/api/products': {name: 'products', guard: true}
         };
 
         switch( this.req.method.toLowerCase() ) {
@@ -100,6 +102,11 @@ module.exports = class HTTPResponse {
             case 'logout':
                 content = 'html/logout.html';
                 break;
+            case 'products':
+                return DB.getAll('products', (err, cont) => {
+                    this.sendJSON(cont);
+                });
+                break;
             default:
                 return this.send404();
         }
@@ -138,6 +145,18 @@ module.exports = class HTTPResponse {
             res.writeHead(200, {});
             contentStream.pipe(this.res);
         }
+    }
+
+    /**
+     * JSON fájl kiszolgálása.
+     */
+    sendJSON(content) {
+        this.res.writeHead(404, {
+            'Content-Length': Buffer.byteLength(content),
+            'Content-Tpye': 'application/json'
+        });
+
+        this.res.end(body);
     }
 
     /**
