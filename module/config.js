@@ -4,5 +4,6 @@
 const path = require('path');
 
 module.exports = {
-    templatePath: path.join(__dirname, 'files')
+    templatePath: path.join(__dirname, 'files'),
+    logPath: path.join(__dirname, 'files/log')
 };

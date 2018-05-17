@@ -6,34 +6,8 @@ const zlib = require('zlib'),
       Readable = require('stream').Readable,
       querystring = require('querystring'), 
       Template = require('./template'),
+      Logger = require('./logger'),
       fsm = require('./fsm');
-
-/**
- * Bejelentkező űrlap.
- */
-const loginContent = ` 
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Oldal</title>
-    </head>
-    <body>
-        <h2>Belépés</h2>
-        <p>kérem adja meg az adatokat a belépéshez</p>
-        <form method="post">
-            <label>Email</label>
-            <br>
-            <input type="email" name="email">
-            <br><br>
-            <label>Jelszó</label>
-            <br>
-            <input type="password" name="password">
-            <br><br>
-            <button>belépés</button>
-        </form>
-    </body>
-</html>
-`;
 
 /**
  * HTTP kérések feldolgozása és a megfelelő válasz küldése a kliens számára.
@@ -50,6 +24,8 @@ module.exports = class HTTPResponse {
         this.res = res;
         this.template = new Template();
         this.testLogin = {email: 'joe@gmail.com', 'password': 'joe'};
+
+        Logger.log(`${this.req.method} ${this.req.url}`);
 
         this.routes = {
             '/': { name: 'index', guard: true },
