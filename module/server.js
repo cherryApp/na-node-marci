@@ -14,7 +14,7 @@ const http = require('http'),
 /**
  * Bejelentkező űrlap.
  */
-const loginContent = `
+const loginContent = ` 
 <!DOCTYPE html>
 <html>
     <head>
