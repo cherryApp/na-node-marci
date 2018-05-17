@@ -18,7 +18,6 @@
   "homepage": "https://github.com/cherryApp/na-node-marci#readme",
   "dependencies": {
     "@coolgk/jwt": "^3.0.0",
-    "cookies": "^0.7.1",
-    "set-cookie": "0.0.4"
+    "cookies": "^0.7.1"
   }
 }
