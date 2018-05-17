@@ -4,7 +4,9 @@
 const zlib = require('zlib'),
       Auth = require('./auth'),
       Readable = require('stream').Readable,
-      querystring = require('querystring');
+      querystring = require('querystring'), 
+      Template = require('./template'),
+      fsm = require('./fsm');
 
 /**
  * Bejelentkező űrlap.
@@ -46,6 +48,7 @@ module.exports = class HTTPResponse {
     constructor(req, res) {
         this.req = req;
         this.res = res;
+        this.template = new Template();
         this.testLogin = {email: 'joe@gmail.com', 'password': 'joe'};
 
         this.routes = {
@@ -113,19 +116,21 @@ module.exports = class HTTPResponse {
 
         switch (page.name) {
             case 'index':
-                content = 'Hellóka, a főoldalon vagy.';
+                content = 'html/index.html';
                 break;
             case 'login':
-                content = loginContent;
+                content = 'html/login.html';
                 break;
             case 'logout':
-                content = 'Kilépés...';
+                content = 'html/logout.html';
                 break;
             default:
                 return this.send404();
         }
 
-        this.compress(content);
+        this.template.getContent(content, (err, cont) => {
+            this.compress(cont);
+        });
     }
 
     /**
