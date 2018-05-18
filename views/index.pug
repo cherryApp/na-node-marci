@@ -1,9 +1,30 @@
 extends layout
 
 block content
-  h1 
-    i.fa.fa-superpowers
-    | #{title}
-    
-  
-  p Welcome to #{title}
+  .row
+    .col-10.offset-1
+      .jumbotron
+        h1.display-4 Jól keresel?
+        p.lead
+          | Tudd meg, mennyi a fizetés a szakmádban!
+        hr.my-4
+        p
+          | Válaszd ki a területet ahol dolgozol és máris láthatod a fizetési adatokat.
+        .row
+          .col-12
+            .input-group.mb-3
+              select.form-control.form-control-lg(name="profession")
+                  option(value="kőműves") kőműves
+                  option(value="asztalos") asztalos
+                  option(value="programozó") programozó
+                  option(value="sori melós") sori melós
+                  option(value="polc pakoló") polc pakoló
+                  option(value="bolti eladó") bolti eladó
+                  option(value="projekt vezető") projekt vezető
+                  option(value="segédmunkás") segédmunkás
+              .input-group-append
+                a.btn.btn-primary.btn-lg(href="/" role="button") mehet
+
+                
+                
+

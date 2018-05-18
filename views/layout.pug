@@ -1,9 +1,15 @@
 doctype html
-html
+html(lang="hu")
   head
     title= title
     link(rel='stylesheet', href='/mod/bootstrap/dist/css/bootstrap.min.css')
     link(rel='stylesheet', href='/mod/font-awesome/css/font-awesome.min.css')
     link(rel='stylesheet', href='/stylesheets/style.css')
   body
-    block content
+    include elements/header.pug
+    .container.main
+      block content
+    include elements/footer.pug
+
+    script(src="/mod/jquery/dist/jquery.min.js")
+    script(src="/mod/bootstrap/dist/js/bootstrap.min.js")
