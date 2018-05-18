@@ -1,0 +1,20 @@
+[
+    {
+        "id": 1,
+        "name": "Vasaló",
+        "manufacturer": "Siemens",
+        "price": 23000
+    },
+    {
+        "id": 2,
+        "name": "Szárítógép",
+        "manufacturer": "Siemens",
+        "price": 199000
+    },
+    {
+        "id": 3,
+        "name": "Mosógép",
+        "manufacturer": "Bosch",
+        "price": 120000
+    }
+]
