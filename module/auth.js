@@ -2,8 +2,7 @@
  * Függőségek betöltése.
  */
 const { Jwt } = require('@coolgk/jwt'),
-      Cookies = require('cookies'),
-      config = require('./config');
+      Cookies = require('cookies');
 
 /**
  * Bejelentkezéseket kezelő osztály.
@@ -14,8 +13,8 @@ class Auth {
      * Beállítjuk a lejárati időt és a titkosításhoz használt kulcsot.
      */
     constructor() {
-        this.cookieName = config.cookieName;
-        this.expire = config.expire;
+        this.cookieName = 'login';
+        this.expire = 60 * 60 * 1000; // 60 * 60 * 1000ms = 1hour
         this.jwt = new Jwt({secret: 'myAwesomeWebAppForMarci'});
     }
 

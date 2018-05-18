@@ -1,12 +1,12 @@
 /**
- * Ez a modul tárolja az alkalmazás közös konfigurációs beállításait.
+ * Konfigurációs beállítások.
  */
 const path = require('path');
 
 module.exports = {
-    templatePath: path.join(__dirname, 'files'),
-    logPath: path.join(__dirname, 'files/log'),
-    dbPath: path.join(__dirname, 'files/db'),
-    cookieName: 'login',
-    expire: 60 * 60 * 1000
+    defaultServerPort: 3210,
+    logDirectory: path.join(__dirname, 'files/log'),
+    htmlDirectory: path.join(__dirname, 'files/html'),
+    dbDirectory: path.join(__dirname, 'files/db'),
+    testLogin: {email: 'joe@gmail.com', 'password': 'joe'}
 };

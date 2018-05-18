@@ -1,30 +1,36 @@
 /**
  * Modulok.
  */
-const fsm = require('./fsm'),
+const fs = require('fs'),
       path = require('path'),
-      config = require('./config');
+      config = require('./config'),
+      Fsm = require('./fsm');
 
 /**
- * Az osztály feladata a fájl alapú adatbáziskezelés.
+ * File alapú json adatbázis.
  */
-class DB {
-    constructor() {
-        this.dir = config.dbPath;
+module.exports = class DB {
+    constructor(collection) {
+        this.filePath = path.join(config.dbDirectory, collection + '.json');
     }
 
-    /**
-     * 
-     * @param {File} doc a json struktúrát tartalmazó fájl neve.
-     */
-    getAll(doc, callBack) {
-        let filePath = path.join(this.dir, `${doc}.json`);
-        fsm.readFile.then( (json) => {
-            callBack(null, json);
-        }).catch( (err) => {
-            callBack(err);
+    getAll() {
+        return Fsm.readPromise(this.filePath);
+    }
+
+    getOne(id) {
+        return new Promise( (resolve, reject) => {
+            Fsm.readPromise(this.filePath).then( (json) => {
+                let data = JSON.parse(json);
+                let row = {};
+                for (let k in data) {
+                    if (data[k].id == id) {
+                        row = data[k];
+                    }
+                }
+                resolve( JSON.stringify(row));
+            });
         });
     }
-}
 
-module.exports = new DB();
+}

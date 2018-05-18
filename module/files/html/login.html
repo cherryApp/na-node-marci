@@ -1,24 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
-<body>
-    <h2>Belépés</h2>
-        <p>kérem adja meg az adatokat a belépéshez</p>
+<div class="container">
+    <div class="col-4 offset-4 text-center">
+        <h2>Belépés</h2>
         <form method="post">
-            <label>Email</label>
-            <br>
-            <input type="email" name="email">
-            <br><br>
-            <label>Jelszó</label>
-            <br>
-            <input type="password" name="password">
-            <br><br>
-            <button>belépés</button>
+            <div class="form-group">
+                <label>Email</label>
+                <input class="form-control" type="email" name="email">                
+            </div>
+            <div class="form-group">
+                <label>Jelszó</label>
+                <input class="form-control" type="password" name="password">
+            </div>
+            <button class="btn btn-primary btn-block">belépés</button>
         </form>
-</body>
-</html>
+    </div>
+</div> 

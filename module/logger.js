@@ -1,61 +1,30 @@
 /**
- * Függőségek betöltése.
+ * Betöltjük a szükséges modulokat.
  */
 const fs = require('fs'),
       path = require('path'),
-      config = require('./config');
+      config = require('./config'),
+      Fsm = require('./fsm');
 
 /**
- * Az osztály feladata a logok írása fájlba.
+ * A Logger osztály fájlokba logolja a megadott információt.
  */
 class Logger {
     /**
-     * Beállítjuk az aktuális logfile helyét.
+     * Beállítjuk a logok könyvtárának az elérési útját.
      */
     constructor() {
-        this.logFile = path.join(
-            config.logPath, 
-            this.sqlDate()+'.log'
-        );
+        
     }
 
-    /**
-     * SQL formátumú dátumot generálunk.
-     */
-    sqlDate() {
-        let date = new Date(),
-            parts = [
-                date.getFullYear(),
-                date.getMonth()+1,
-                date.getDate()
-            ];
-
-        for (let k in parts) {
-            if (parts[k] < 10) {
-                parts[k] = '0'+parts[k];
-            }
-        }
-
-        return parts.join('-');
-    }
-
-    /**
-     * Logoljuk a kapott üzenetet.
-     * @param {String} message a logba kerülő üzenet.
-     */
     log(message) {
-        fs.appendFile(
-            this.logFile,
-            `${new Date()}: ${message} \n`,
-            'utf8',
-            (err) => {
-                if (err) {
-                    console.error(err);
-                } else {
-                    console.log('logged');
-                }
-            }
-        );
+        Fsm.writePromise(
+            path.join(config.logDirectory, 'log.log'),
+            `${new Date()} ${message}\n`,
+            true
+        ).catch( (err) => {
+            console.error(err);
+        });
     }
 }
 

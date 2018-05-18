@@ -6,7 +6,8 @@
  * A szükséges függőségek beolvasása.
  */
 const http = require('http'),
-      HTTPResponse = require('./httpResponse');
+      HTTPResponse = require('./httpResponse'),
+      config = require('./config');
 
 /**
  * Server osztály a kérések és válaszok feldolgozására.
@@ -34,7 +35,7 @@ class Server {
 
         this.processArgs();
 
-        this.port = this.argObject.port || 3210;
+        this.port = this.argObject.port || config.defaultServerPort;
         this.maxRetry = 7;
         this.retryNum = 0;
         this.retryInterval = 1500;
@@ -81,6 +82,7 @@ class Server {
      * @param {Response} res a válaszadáshoz szükséges objektum.
      */
     response(req, res) {
+        console.log(`${req.method}  ${req.url}  ${new Date()}, ${req.cookie}`);
         new HTTPResponse(req, res);
     }
 

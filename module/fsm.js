@@ -1,25 +1,15 @@
-/**
- * Függőségek betöltése.
- */
 const fs = require('fs'),
       path = require('path'),
-      util = require('util');
+      config = require('./config');
 
 class Fsm {
     /**
-     * A konstruktorban beállítjuk az fs modult.
-     * A fontosabb metódusokat a util.promisify segítségével átalakítjuk.
+     * Fájlok olvasása Promise segítségével.
+     * @param {String} filePath a fájl elérési útja.
      */
-    constructor() {
-        this.fs = fs;
-        this.readdir = util.promisify(fs.readdir);
-        // this.readFile = util.promisify(fs.readFile);
-        this.writeFile = util.promisify(fs.writeFile);
-    }
-
-    readFile(filePath, encoding) {
+    readPromise(filePath) {
         return new Promise( (resolve, reject) => {
-            fs.readFile(filePath, encoding, (err, content) => {
+            fs.readFile(filePath, 'utf8', (err, content) => {
                 if (err) {
                     reject(err);
                 } else {
@@ -28,6 +18,33 @@ class Fsm {
             });
         });
     }
-}
+
+    /**
+     * Fájlok írása Promise segítségével.
+     * @param {String} filePath a fájl elérési útja.
+     * @param {String} content a fájl tartalma.
+     * @param {Boolean} append hozzáfűzés.
+     */
+    writePromise(filePath, content, append = false) {
+        console.log(content);
+        return new Promise( (resolve, reject) => {
+            fs.writeFile(
+                filePath,
+                content,
+                {
+                    encoding: 'utf8',
+                    flag: append ? 'a' : 'w'
+                }, 
+                (err) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve();
+                    }
+                }
+            );
+        });
+    }
+};
 
 module.exports = new Fsm();

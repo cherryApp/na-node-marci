@@ -1,14 +1,13 @@
-/**
- * Függőségek betöltése.
- */
 const zlib = require('zlib'),
-      Auth = require('./auth'),
-      Readable = require('stream').Readable,
-      querystring = require('querystring'), 
-      Template = require('./template'),
-      Logger = require('./logger'),
-      fsm = require('./fsm'),
-      DB = require('./DB');
+        Readable = require('stream').Readable,
+        Auth = require('./auth'),
+        querystring = require('querystring'),
+        fs = require('fs'),
+        path = require('path'),
+        Logger = require('./logger'),
+        config = require('./config'),
+        Template = require('./template'),
+        DB = require('./DB');
 
 /**
  * HTTP kérések feldolgozása és a megfelelő válasz küldése a kliens számára.
@@ -23,16 +22,14 @@ module.exports = class HTTPResponse {
     constructor(req, res) {
         this.req = req;
         this.res = res;
-        this.template = new Template();
-        this.testLogin = {email: 'joe@gmail.com', 'password': 'joe'};
 
-        Logger.log(`${this.req.method} ${this.req.url}`);
+        Logger.log(`${req.method} url: ${req.url}`);
 
         this.routes = {
             '/': { name: 'index', guard: true },
             '/login': { name: 'login', guard: false },
             '/logout': { name: 'logout', guard: true },
-            '/api/products': {name: 'products', guard: true}
+            '/api/products/1': { name: 'api/products/1', guard: true }
         };
 
         switch( this.req.method.toLowerCase() ) {
@@ -61,8 +58,8 @@ module.exports = class HTTPResponse {
 
             if (
                 this.req.url === '/login' && 
-                postData.email == this.testLogin.email && 
-                postData.password == this.testLogin.password
+                postData.email == config.testLogin.email && 
+                postData.password == config.testLogin.password
             ) {
                 this.res = Auth.setCookie(
                     this.req, 
@@ -94,25 +91,30 @@ module.exports = class HTTPResponse {
 
         switch (page.name) {
             case 'index':
-                content = 'html/index.html';
+                content = 'index.html';
                 break;
             case 'login':
-                content = 'html/login.html';
+                content = 'login.html';
                 break;
             case 'logout':
-                content = 'html/logout.html';
+                content = 'logout.html';
                 break;
-            case 'products':
-                return DB.getAll('products', (err, cont) => {
-                    this.sendJSON(cont);
+            case 'api/products/1':
+                return new DB('products').getOne(3).then( (json) => {
+                    this.json(json);
                 });
                 break;
             default:
                 return this.send404();
         }
 
-        this.template.getContent(content, (err, cont) => {
-            this.compress(cont);
+        new Template().getContent(content, (err, fc) => {
+            if (err) {
+                console.log(err);
+                this.send404();
+            } else {
+                this.compress(fc);
+            }
         });
     }
 
@@ -148,18 +150,6 @@ module.exports = class HTTPResponse {
     }
 
     /**
-     * JSON fájl kiszolgálása.
-     */
-    sendJSON(content) {
-        this.res.writeHead(404, {
-            'Content-Length': Buffer.byteLength(content),
-            'Content-Tpye': 'application/json'
-        });
-
-        this.res.end(body);
-    }
-
-    /**
      * 404 hibaüzenet küldése.
      */
     send404() {
@@ -183,5 +173,17 @@ module.exports = class HTTPResponse {
         });
 
         this.res.end(body);
+    }
+
+    /**
+     * JSON küldése.
+     */
+    json(jsonSource) {
+        this.res.writeHead(401, {
+            'Content-Length': Buffer.byteLength(jsonSource),
+            'Content-Tpye': 'application/json'
+        });
+
+        this.res.end(jsonSource);
     }
 }
