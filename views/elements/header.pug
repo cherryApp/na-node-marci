@@ -10,13 +10,15 @@ nav.navbar.navbar-expand-lg.navbar-light.bg-success.fixed-top
         a.nav-link(href="/")
           | Fizetések 
           span.sr-only (current)
-      li.nav-item
-        a.nav-link(href="/profession") Szakmák
-      li.nav-item
-        a.nav-link(href="/users") Felhasználók
-      if !authenticated 
+      if authenticated
         li.nav-item
-          a.nav-link(href="/login") Belépés
-      else 
+          a.nav-link(href="/admin/profession") Szakmák
         li.nav-item
           a.nav-link(href="/logout") Kilépés
+      else 
+        li.nav-item
+          a.nav-link(href="/login") Belépés
+    if user
+      .float-right.span-user
+        i.fa.fa-user-circle-o
+        |  #{user.name}

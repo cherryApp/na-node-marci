@@ -1,0 +1,22 @@
+[
+    {
+        "id": 1,
+        "name": "Programozó",
+        "type": "szellemi"
+    },
+    {
+        "id": 2,
+        "name": "Projekt Manager",
+        "type": "szellemi"
+    },
+    {
+        "id": 3,
+        "name": "Asztalos",
+        "type": "fizikai"
+    },
+    {
+        "id": 4,
+        "name": "Burkoló",
+        "type": "fizikai"
+    }
+]

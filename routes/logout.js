@@ -3,8 +3,7 @@ const express = require('express'),
       Auth = require('../module/auth');
 
 router.get('/', (req, res, next) => {
-    Auth.logout(req, res);
-    res.redirect('/');
+    Auth.logout(req, res).redirect('/');
 });
 
 module.exports = router;

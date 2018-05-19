@@ -6,7 +6,6 @@ var logger = require('morgan');
 
 const Auth = require('./module/auth');
 const requireLogin = require('./middleware/requireLogin');
-
 var app = express();
 
 // view engine setup
@@ -25,18 +24,19 @@ app.use(express.static(path.join(__dirname, 'public')));
  */
 app.use((req, res, next) => {
   res.locals.authenticated = Auth.isAuthenticated(req, res);
+  res.locals.user = Auth.getInfo(req, res);
   next();
 });
 
-app.all('/admin/*', requireLogin, (req, res, next) => {
-  next();
-});
+app.all('/admin/*', requireLogin);
+
 
 app.use('/', require('./routes/index'));
 app.use('/users', require('./routes/users'));
+app.use('/admin', require('./routes/admin'));
+app.use('/ajax', require('./routes/ajax'));
 app.use('/login', require('./routes/login'));
 app.use('/logout', require('./routes/logout'));
-app.use('/admin', require('./routes/admin'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

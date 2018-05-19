@@ -1,11 +1,9 @@
 /**
- * Védjük az url-eket jogosulatlan megtekintés ellen.
+ * Védjük az url-eket a jogosultalan megnyitás ellen.
  */
-const Auth = require('../module/auth');
-
 module.exports = (req, res, next) => {
-    if (!Auth.isAuthenticated(req, res)) {
-        res.redirect('/login?redirect='+req.url);
+    if (!res.locals.authenticated) {
+        res.redirect('/');
     } else {
         next();
     }

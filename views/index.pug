@@ -12,14 +12,17 @@ block content
       .col-12
         .input-group.mb-3
           select.form-control.form-control-lg(name='profession')
-            option(value='kőműves') kőműves
-            option(value='asztalos') asztalos
-            option(value='programozó') programozó
-            option(value='sori melós') sori melós
-            option(value='polc rendező') polc rendező
-            option(value='bolti eladó') bolti eladó
-            option(value='projekt vezető') projekt vezető
+            each prof in profs
+              option(value=prof.id)= prof.name
           button.btn.btn-primary.btn-lg.find-profession-btn mehet
+
+  ul.list-group.salary-list(style="display: none;")
+    li.list-group-item.active Fizetések listája
+    
+  .hidden(style="display: none;")
+    li.list-group-item.template template
+    
+
 
 
 block scripts

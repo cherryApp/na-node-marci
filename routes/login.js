@@ -1,7 +1,6 @@
 const express = require('express'),
       router = express.Router(),
       DB = require('../module/DB'),
-      Users = new DB('users'),
       Auth = require('../module/auth');
 
 router.get('/', (req, res, next) => {
@@ -9,22 +8,20 @@ router.get('/', (req, res, next) => {
 });
 
 /**
- * Post bejelentkezés kezelése.
+ * Post kérés a beléptetéshez.
  */
 router.post('/', (req, res, next) => {
-    Users.findOne({email: req.body.email, password: req.body.password})
+    let credentials = {email: req.body.email, password: req.body.password};
+    let users = new DB('users');
+    users.findOne(credentials)
         .then( user => {
             if (user) {
                 delete user.password;
-                Auth.setCookie(req, res, user);
-                res.send('Sikeres belépés');
+                Auth.setCookie(req, res, user)
+                    .redirect('/');
             } else {
                 res.render('login', {title: 'Belépés', fail: true});
             }
-        })
-        .catch( err => {
-            console.error(err);
-            res.render('login', {title: 'Belépés'});
         });
 });
 
