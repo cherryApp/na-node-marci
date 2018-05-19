@@ -14,5 +14,9 @@ nav.navbar.navbar-expand-lg.navbar-light.bg-success.fixed-top
         a.nav-link(href="/profession") Szakmák
       li.nav-item
         a.nav-link(href="/users") Felhasználók
-      li.nav-item
-        a.nav-link(href="/login") Belépés
+      if !authenticated 
+        li.nav-item
+          a.nav-link(href="/login") Belépés
+      else 
+        li.nav-item
+          a.nav-link(href="/logout") Kilépés

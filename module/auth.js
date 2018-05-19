@@ -23,13 +23,20 @@ class Auth {
      * @param {String} info a titkosítandó objektum.
      * @returns jwt token.
      */
-    getToken(info) {
+    getToken(info, expire) {
+        expire = expire || this.expire;
         return this.jwt.generate(info, this.expire);
     }
 
     setCookie(req, res, info) {
         let cookies = new Cookies(req, res);
         cookies.set(this.cookieName, this.getToken(info));        
+        return res;
+    }
+
+    logout(req, res) {
+        let cookies = new Cookies(req, res);
+        cookies.set(this.cookieName);
         return res;
     }
 
