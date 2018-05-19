@@ -1,0 +1,23 @@
+[
+    {
+        "id": 1,
+        "name": "Joe Filpo",
+        "email": "joe@gmail.com",
+        "password": "joe",
+        "role": 1
+    },
+    {
+        "id": 2,
+        "name": "Steve Wonder",
+        "email": "steve@gmail.com",
+        "password": "steve",
+        "role": 2
+    },
+    {
+        "id": 3,
+        "name": "Bruce Willis",
+        "email": "bruce@gmail.com",
+        "password": "bruce",
+        "role": 2
+    }
+]

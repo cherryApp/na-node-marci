@@ -4,6 +4,8 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+const Auth = require('./module/auth');
+const requireLogin = require('./middleware/requireLogin');
 var app = express();
 
 // view engine setup
@@ -17,10 +19,24 @@ app.use(cookieParser());
 app.use(require('./middleware/nodeStatic'));
 app.use(express.static(path.join(__dirname, 'public')));
 
+/**
+ * Bejelentkezés ellenőrzése.
+ */
+app.use((req, res, next) => {
+  res.locals.authenticated = Auth.isAuthenticated(req, res);
+  res.locals.user = Auth.getInfo(req, res);
+  next();
+});
+
+app.all('/admin/*', requireLogin);
+
+
 app.use('/', require('./routes/index'));
 app.use('/users', require('./routes/users'));
-app.use('/profession', require('./routes/profession'));
+app.use('/admin', require('./routes/admin'));
+app.use('/ajax', require('./routes/ajax'));
 app.use('/login', require('./routes/login'));
+app.use('/logout', require('./routes/logout'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -1,0 +1,42 @@
+[
+    {
+        "id": 1,
+        "profession": 2,
+        "amount": 350000
+    },
+    {
+        "id": 2,
+        "profession": 1,
+        "amount": 290000
+    },
+    {
+        "id": 3,
+        "profession": 4,
+        "amount": 250000
+    },
+    {
+        "id": 4,
+        "profession": 3,
+        "amount": 345000
+    },
+    {
+        "id": 5,
+        "profession": 3,
+        "amount": 378000
+    },
+    {
+        "id": 6,
+        "profession": 3,
+        "amount": 510000
+    },
+    {
+        "id": 7,
+        "profession": 3,
+        "amount": 190000
+    },
+    {
+        "id": 8,
+        "profession": 3,
+        "amount": 250000
+    }
+]
