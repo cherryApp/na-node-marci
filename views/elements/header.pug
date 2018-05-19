@@ -1,0 +1,18 @@
+nav.navbar.navbar-expand-lg.navbar-light.bg-success.fixed-top
+  a.navbar-brand(href="/") 
+    i.fa.fa-superpowers
+    | Della
+  button.navbar-toggler(type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation")
+    span.navbar-toggler-icon
+  #navbarNav.collapse.navbar-collapse
+    ul.navbar-nav
+      li.nav-item.active
+        a.nav-link(href="/")
+          | Fizetések 
+          span.sr-only (current)
+      li.nav-item
+        a.nav-link(href="/profession") Szakmák
+      li.nav-item
+        a.nav-link(href="/users") Felhasználók
+      li.nav-item
+        a.nav-link(href="/login") Belépés

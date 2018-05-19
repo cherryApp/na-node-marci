@@ -1,0 +1,21 @@
+include mixin/btn
+
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/mod/bootstrap/dist/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/mod/font-awesome/css/font-awesome.min.css')
+    link(rel='stylesheet', href='/stylesheets/style.css')
+  body
+    include elements/header
+
+    .container.main
+      block content
+
+    include elements/footer
+
+    script(src='/mod/jquery/dist/jquery.min.js')
+    script(src='/mod/bootstrap/dist/js/bootstrap.min.js')
+
+    block scripts

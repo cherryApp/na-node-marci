@@ -1,0 +1,26 @@
+extends layout
+
+block content
+  .jumbotron
+    h1.display-4= title
+    p.lead
+      | Tudd meg, mennyi a fizetés a szakmádban!
+    hr.my-4
+    p
+      | Válaszd ki a területet ahol dolgozol és máris láthatod a fizetéseket.
+    .row
+      .col-12
+        .input-group.mb-3
+          select.form-control.form-control-lg(name='profession')
+            option(value='kőműves') kőműves
+            option(value='asztalos') asztalos
+            option(value='programozó') programozó
+            option(value='sori melós') sori melós
+            option(value='polc rendező') polc rendező
+            option(value='bolti eladó') bolti eladó
+            option(value='projekt vezető') projekt vezető
+          button.btn.btn-primary.btn-lg.find-profession-btn mehet
+
+
+block scripts
+  script(src="/javascripts/index.js") 
